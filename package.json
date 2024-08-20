@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "chart.js": "^4.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.428.0",
@@ -16,6 +17,7 @@
     "query-string": "^9.1.0",
     "query-strings": "^0.1.0",
     "react": "^18",
+    "react-chartjs-2": "^5.2.0",
     "react-countup": "^6.5.3",
     "react-dom": "^18",
     "tailwind-merge": "^2.5.2",
