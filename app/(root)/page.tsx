@@ -28,7 +28,11 @@ const Home = () => {
 
         {/* TODO: Recent Transactions to be implemented */}
       </div>
-      <RightSidebar user={loggedIn} transactions={[]} banks={[{}, {}]} />
+      <RightSidebar
+        user={loggedIn}
+        transactions={[]}
+        banks={[{ currentBalance: 123.5 }, { currentBalance: 153.78 }]}
+      />
     </section>
   );
 };
