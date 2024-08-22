@@ -1,6 +1,11 @@
 "use client";
 import React from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import Image from "next/image";
 import Link from "next/link";
 import { sidebarLinks } from "@/constants";
@@ -21,49 +26,60 @@ const MobileNav = ({ user }: MobileNavProps) => {
             className="cursor-pointer"
           />
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="left" className="border-none bg-white">
           <Link
             href="/"
-            className="mb-12 flex cursor-pointer items-center gap-2"
+            className="flex cursor-pointer items-center gap-1 px-4"
           >
             <Image
               src="/icons/logo.svg"
               width={34}
               height={34}
               alt="Horizon logo"
-              className="size-[24px] max-xl:size-14"
             />
-            <h1 className="sidebar-logo">Horizon</h1>
+            <h1 className="text-26 font-ibm-plex-serif font-bold text-black-1">
+              Horizon
+            </h1>
           </Link>
-          {sidebarLinks.map((item) => {
-            const isActive =
-              pathName === item.route || pathName.startsWith(`${item.route}/`);
-            return (
-              <Link
-                href={item.route}
-                key={item.label}
-                className={cn("sidebar-link", { "bg-bank-gradient": isActive })}
-              >
-                <div className="relative size-6">
-                  <Image
-                    className={cn({
-                      "brightness-[3] invert-0": isActive,
-                    })}
-                    src={item.imgURL}
-                    alt={item.label}
-                    fill
-                  />
-                </div>
-                <p
-                  className={cn("sidebar-label", {
-                    "!text-white": isActive,
-                  })}
-                >
-                  {item.label}
-                </p>
-              </Link>
-            );
-          })}
+          <div className="mobilenav-sheet">
+            <SheetClose asChild>
+              <nav className="flex h-full flex-col gap-6 pt-16 text-white">
+                {sidebarLinks.map((item) => {
+                  const isActive =
+                    pathName === item.route ||
+                    pathName.startsWith(`${item.route}/`);
+                  return (
+                    <SheetClose asChild key={item.route}>
+                      <Link
+                        href={item.route}
+                        key={item.label}
+                        className={cn("mobilenav-sheet_close w-full", {
+                          "bg-bank-gradient": isActive,
+                        })}
+                      >
+                        <Image
+                          className={cn({
+                            "brightness-[3] invert-0": isActive,
+                          })}
+                          src={item.imgURL}
+                          alt={item.label}
+                          width={20}
+                          height={20}
+                        />
+                        <p
+                          className={cn("text-16 font-semibold text-black-2", {
+                            "text-white": isActive,
+                          })}
+                        >
+                          {item.label}
+                        </p>
+                      </Link>
+                    </SheetClose>
+                  );
+                })}
+              </nav>
+            </SheetClose>
+          </div>
         </SheetContent>
       </Sheet>
     </section>
