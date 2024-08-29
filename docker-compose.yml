@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: . # Assuming Dockerfile is in the same directory
+      target: dev
+    restart: always
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+      # Uncomment the line below if you are using Windows and have file watching issues
+      # - WATCHPACK_POLLING=true
+    volumes:
+      - .:/app:cached # Cached volume for better performance
+      - /app/node_modules # Avoid overwriting node_modules
+      - /app/.next # Cache the .next build artifacts
+    ports:
+      - 3000:3000
