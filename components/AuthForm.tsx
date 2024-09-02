@@ -10,12 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface AuthFormProps {
   type: String;
 }
 const AuthForm = ({ type }: AuthFormProps) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof authFormSchema>>({
@@ -30,7 +32,9 @@ const AuthForm = ({ type }: AuthFormProps) => {
   function onSubmit(values: z.infer<typeof authFormSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
+    setLoading(true);
     console.log(values);
+    setLoading(false);
   }
   return (
     <section className="auth-form">
@@ -77,9 +81,33 @@ const AuthForm = ({ type }: AuthFormProps) => {
                 type="password"
               />
 
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={loading} className="form-btn">
+                {loading ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" /> &nbsp;
+                    Loading....
+                  </>
+                ) : type === "sign-in" ? (
+                  "Sign In"
+                ) : (
+                  "Sign Up"
+                )}
+              </Button>
             </form>
           </Form>
+          <footer className="flex justify-center gap-1">
+            <p className=" text-14 font-normal text-gray-600">
+              {type === "sign-in"
+                ? "Don't have an account ?"
+                : "Already have an account ?"}
+            </p>
+            <Link
+              href={type === "sign-in" ? "/sign-up" : "/sign-in"}
+              className="form-link"
+            >
+              {type === "sign-in" ? "Sign Up" : "Sign In"}
+            </Link>
+          </footer>
         </>
       )}
     </section>
