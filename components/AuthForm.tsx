@@ -11,6 +11,8 @@ import { Form } from "@/components/ui/form";
 import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/actions/user.actions";
 
 interface AuthFormProps {
   type: String;
@@ -18,6 +20,7 @@ interface AuthFormProps {
 const AuthForm = ({ type }: AuthFormProps) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const formSchema = authFormSchema(type);
   // 1. Define your form.
@@ -37,8 +40,16 @@ const AuthForm = ({ type }: AuthFormProps) => {
     try {
       //sign up with Appwrite and plaid token
       if (type === "sign-up") {
+        const newUser = await signUp(data);
+        setUser(newUser);
       }
       if (type === "sign-in") {
+        const response = await signIn({
+          email: data.email,
+          password: data.email,
+        });
+
+        if (response) router.push("/");
       }
     } catch (error) {
       console.log(error);
@@ -82,14 +93,14 @@ const AuthForm = ({ type }: AuthFormProps) => {
                   <div className="flex gap-3">
                     <CustomInput
                       control={form.control}
-                      name="firstname"
+                      name="firstName"
                       label="First Name"
                       placeholder="Enter your firstname"
                     />
 
                     <CustomInput
                       control={form.control}
-                      name="lastname"
+                      name="lastName"
                       label="Last Name"
                       placeholder="Enter your lastname"
                     />
@@ -113,13 +124,13 @@ const AuthForm = ({ type }: AuthFormProps) => {
                       control={form.control}
                       name="state"
                       label="State"
-                      placeholder="Example: NY"
+                      placeholder="Example: WB"
                     />
                     <CustomInput
                       control={form.control}
                       name="postalCode"
                       label="Postal Code"
-                      placeholder="Example: 11101"
+                      placeholder="Example: 700001"
                     />
                   </div>
                   <div className="flex gap-3">
@@ -131,9 +142,9 @@ const AuthForm = ({ type }: AuthFormProps) => {
                     />
                     <CustomInput
                       control={form.control}
-                      name="ssn"
-                      label="SSN"
-                      placeholder="Example: 1234"
+                      name="adhaar"
+                      label="Adhaar"
+                      placeholder="Example: 1234 5678 9000"
                     />
                   </div>
                 </>
