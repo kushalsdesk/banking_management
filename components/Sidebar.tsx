@@ -1,5 +1,6 @@
 "use client";
 import { sidebarLinks } from "@/constants";
+import Footer from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -56,7 +57,7 @@ const Sidebar = ({ user }: SiderbarProps) => {
           })}
           User
         </nav>
-        Footer
+        <Footer user={user} />
       </section>
       <div></div>
     </>

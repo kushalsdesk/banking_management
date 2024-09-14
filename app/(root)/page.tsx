@@ -23,7 +23,6 @@ const Home = async () => {
             totalBanks={1}
             totalCurrentBalance={1250.35}
           />
-          <Button onClick={logoutAccount}>Logout</Button>
         </header>
         RECENT TRANSACTIONS
       </div>
