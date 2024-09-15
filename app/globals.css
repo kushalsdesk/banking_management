@@ -315,8 +315,8 @@
     bottom: 0;
     background: linear-gradient(
       to right,
-      #0179fe,
-      #4893ff
+      #00cc66,
+      #006400
     ); /* Deep Blue to Light Blue */
     border-radius: inherit; /* Match the border-radius of the parent element */
     z-index: -1; /* Place the pseudo-element behind the content */
@@ -331,13 +331,13 @@
     overflow: hidden;
   }
   .text-bankGradient {
-    background: linear-gradient(to right, #0179fe, #4893ff);
+    background: linear-gradient(90deg, #007c99, #1c9683);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .form-link {
-    @apply text-14 cursor-pointer font-bold text-bankGradient;
+    @apply text-16 cursor-pointer font-bold text-bankGradient;
   }
 
   /* Payment Transfer */

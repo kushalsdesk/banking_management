@@ -10,10 +10,10 @@ const ibmPlexSerif = IBM_Plex_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Horizon",
+  title: "FinLife",
   description: "A modern baking platfrom for all",
   icons: {
-    icon: "/icons/logo.svg",
+    icon: "/icons/Logo.png",
   },
 };
 

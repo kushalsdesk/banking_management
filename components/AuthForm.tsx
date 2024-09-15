@@ -63,13 +63,13 @@ const AuthForm = ({ type }: AuthFormProps) => {
       <header className="flex flex-col gap-5 md:gap-8">
         <Link href="/" className="flex cursor-pointer items-center gap-1">
           <Image
-            src="/icons/logo.svg"
-            width={34}
-            height={34}
+            src="/icons/Logo.png"
+            width={45}
+            height={45}
             alt="Horizon logo"
           />
           <h1 className="text-26 font-ibm-plex-serif font-bold text-black-1">
-            Horizon
+            FinLife
           </h1>
         </Link>
         <div className="flex flex-col gap-1 md:gap-3">
@@ -181,7 +181,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
             </form>
           </Form>
           <footer className="flex justify-center gap-1">
-            <p className=" text-14 font-normal text-gray-600">
+            <p className=" text-16 font-normal text-gray-600">
               {type === "sign-in"
                 ? "Don't have an account ?"
                 : "Already have an account ?"}

@@ -18,13 +18,13 @@ const Sidebar = ({ user }: SiderbarProps) => {
             className="mb-12 flex cursor-pointer items-center gap-2"
           >
             <Image
-              src="/icons/logo.svg"
-              width={34}
-              height={34}
+              src="/icons/Logo.png"
+              width={70}
+              height={70}
               alt="Horizon logo"
-              className="size-[24px] max-xl:size-14"
+              className="size-[44px] max-xl:size-14"
             />
-            <h1 className="sidebar-logo">Horizon</h1>
+            <h1 className="sidebar-logo">FinLife</h1>
           </Link>
           {sidebarLinks.map((item) => {
             const isActive =
