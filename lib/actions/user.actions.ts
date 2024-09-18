@@ -4,6 +4,8 @@ import { ID } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { cookies } from "next/headers";
 import { parseStringify } from "../utils";
+import { CountryCode, Products } from "plaid";
+import { plaidClient } from "@/lib/plaid";
 
 export const signIn = async ({ email, password }: signInProps) => {
   try {
@@ -68,5 +70,48 @@ export const logoutAccount = async () => {
     await account.deleteSession("current");
   } catch (error) {
     return null;
+  }
+};
+
+export const createLinkToken = async (user: User) => {
+  try {
+    const tokenParams = {
+      user: {
+        client_user_id: user.$id,
+      },
+      client_name: user.name,
+      products: ["auth"] as Products[],
+      language: "en",
+      country_codes: ["US", "IN"] as CountryCode[],
+    };
+    const response = await plaidClient.linkTokenCreate(tokenParams);
+
+    return parseStringify({ linkToken: response.data.link_token });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const exchangePublicToken = async ({
+  publicToken,
+  user,
+}: exchangePublicTokenProps) => {
+  try {
+    //Exchange public token for acess token and item ID
+    const response = await plaidClient.itemPublicTokenExchange({
+      public_token: publicToken,
+    });
+
+    const accessToken = response.data.access_token;
+    const itemId = response.data.item_id;
+
+    //Get account information from plaid using the access token
+    const accountResponse = await plaidClient.accountsGet({
+      access_token: accessToken,
+    });
+
+    const accountData = accountResponse.data.accounts[0];
+  } catch (error) {
+    console.error("An error occured while creating exchanging token", error);
   }
 };

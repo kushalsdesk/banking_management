@@ -21,10 +21,10 @@ const Sidebar = ({ user }: SiderbarProps) => {
               src="/icons/Logo.png"
               width={70}
               height={70}
-              alt="Horizon logo"
+              alt="FinFly logo"
               className="size-[44px] max-xl:size-14"
             />
-            <h1 className="sidebar-logo">FinLife</h1>
+            <h1 className="sidebar-logo text-green-800">FinFly</h1>
           </Link>
           {sidebarLinks.map((item) => {
             const isActive =
