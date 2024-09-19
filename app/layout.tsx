@@ -10,7 +10,7 @@ const ibmPlexSerif = IBM_Plex_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "FinFly",
+  title: "FinLife",
   description: "A modern baking platfrom for all",
   icons: {
     icon: "/icons/Logo.png",

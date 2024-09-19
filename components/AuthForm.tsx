@@ -69,8 +69,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
             height={45}
             alt="Horizon logo"
           />
-          <h1 className="text-26 font-ibm-plex-serif font-bold text-black-1">
-            FinFly
+          <h1 className="text-26 font-ibm-plex-serif font-bold text-userGradient">
+            FinLife
           </h1>
         </Link>
         <div className="flex flex-col gap-1 md:gap-3">

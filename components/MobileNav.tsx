@@ -36,10 +36,10 @@ const MobileNav = ({ user }: MobileNavProps) => {
               src="/icons/Logo.png"
               width={44}
               height={44}
-              alt="Horizon logo"
+              alt="FinLife logo"
             />
-            <h1 className="text-26 font-ibm-plex-serif font-bold text-black-1">
-              FinFly
+            <h1 className="text-26 font-ibm-plex-serif font-bold text-userGradient">
+              FinLife
             </h1>
           </Link>
           <div className="mobilenav-sheet">
