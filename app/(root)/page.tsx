@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { getLoggedInUser, logoutAccount } from "@/lib/actions/user.actions";
 
 const Home = async () => {
-  const loggedIn = await getLoggedInUser();
+  // const loggedIn = await getLoggedInUser();
 
+  const loggedIn = { firstName: "Adrian", lastName: "JSM" };
   return (
     <section className="home">
       <div className="home-content">

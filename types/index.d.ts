@@ -16,8 +16,8 @@ declare type SignUpParams = {
   postalCode?: string;
   dateOfBirth?: string;
   adhaar?: string;
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
 };
 
 declare type LoginUser = {
@@ -295,8 +295,9 @@ declare interface getTransactionsByBankIdProps {
 }
 
 declare interface signInProps {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
+  type?: "email" | "google" | "github";
 }
 
 declare interface getUserInfoProps {

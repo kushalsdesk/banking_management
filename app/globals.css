@@ -325,6 +325,57 @@
   }
 
   /* Utility for the button */
+  .btn-base {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .btn-base:hover {
+    color: white;
+  }
+  .btn-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #007c99, #1c9683);
+    transform: translateX(100%);
+    transition: transform 0.5s ease-in-out;
+  }
+
+  @keyframes gradientFillIn {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes gradientFillOut {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .btn-base .btn-gradient {
+    animation: gradientFillOut 0.5s ease-in-out forwards;
+  }
+
+  .btn-base:hover .btn-gradient {
+    animation: gradientFillIn 0.5s ease-in-out forwards;
+  }
+
   .form-btn {
     @apply text-16 rounded-lg border bg-bank-gradient font-semibold text-white shadow-form;
     position: relative;

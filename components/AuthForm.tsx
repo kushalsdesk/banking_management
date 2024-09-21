@@ -2,56 +2,74 @@
 import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import CustomInput from "./CustomInput";
-import { authFormSchema } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { CardContent, CardFooter } from "@/components/ui/card";
+import { Loader2, ChevronLeft, Github, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signIn, signUp } from "@/lib/actions/user.actions";
-import PlaidLink from "./PlaidLink";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { auth } from "@/lib/firebase";
+import {
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+} from "firebase/auth";
 
 interface AuthFormProps {
   type: String;
 }
+interface AuthCredentials {
+  email: string;
+  passsword: string;
+}
 const AuthForm = ({ type }: AuthFormProps) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | undefined>();
+  const [authCred, setAuthCred] = useState<AuthCredentials>({
+    email: "",
+    passsword: "",
+  });
   const [loading, setLoading] = useState(false);
+  const [authType, setAuthType] = useState<
+    "email" | "google" | "github" | null
+  >(null);
   const router = useRouter();
 
-  const formSchema = authFormSchema(type);
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
 
-  // 2. Define a submit handler.
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  const authHandler = async () => {
     setLoading(true);
     try {
-      //sign up with Appwrite and plaid token
-      if (type === "sign-up") {
-        const newUser = await signUp(data);
-        setUser(newUser);
-      }
-      if (type === "sign-in") {
-        const response = await signIn({
-          email: data.email,
-          password: data.password,
-        });
-
-        if (!response) router.push("/sign-up");
-        if (response) router.push("/");
+      if (authType === "email") {
+        if (type === "sign-up") {
+          const session = await createUserWithEmailAndPassword(
+            auth,
+            authCred.email,
+            authCred.passsword,
+          );
+          const newUser = session.user;
+          console.log(newUser);
+        } else {
+          const session = await signInWithEmailAndPassword(
+            auth,
+            authCred.email,
+            authCred.passsword,
+          );
+          const newUser = session.user;
+          console.log(newUser);
+        }
+      } else {
+        if (authType === "google") {
+          const session = await signInWithPopup(auth, googleProvider);
+          const newUser = session.user;
+          console.log(newUser);
+        } else {
+          const session = await signInWithPopup(auth, githubProvider);
+          const newUser = session.user;
+          console.log(newUser);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -80,109 +98,151 @@ const AuthForm = ({ type }: AuthFormProps) => {
           <p className="text-16 font-normal text-gray-600">
             {user
               ? "Link Your Account to get started"
-              : "Please enter your details"}
+              : "Please choose a Method "}
           </p>
         </div>
       </header>
       {/* {user ? ( */}
-      <div className="flex flex-col gap-4">
-        <PlaidLink user={user} variant="primary" />
-      </div>
+      {/* here will be detailsForm when the user is present*/}
+      <div className="flex flex-col gap-4"></div>
       {/* ) : ( */}
       <>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            {type === "sign-up" && (
-              <>
-                <div className="flex gap-3">
-                  <CustomInput
-                    control={form.control}
-                    name="firstName"
-                    label="First Name"
-                    placeholder="Enter your firstname"
-                  />
-
-                  <CustomInput
-                    control={form.control}
-                    name="lastName"
-                    label="Last Name"
-                    placeholder="Enter your lastname"
-                  />
-                </div>
-
-                <CustomInput
-                  control={form.control}
-                  name="address"
-                  label="Address"
-                  placeholder="Enter your specific address"
-                />
-
-                <CustomInput
-                  control={form.control}
-                  name="city"
-                  label="City"
-                  placeholder="Enter your city "
-                />
-                <div className="flex gap-3">
-                  <CustomInput
-                    control={form.control}
-                    name="state"
-                    label="State"
-                    placeholder="Example: WB"
-                  />
-                  <CustomInput
-                    control={form.control}
-                    name="postalCode"
-                    label="Postal Code"
-                    placeholder="Example: 700001"
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <CustomInput
-                    control={form.control}
-                    name="dateOfBirth"
-                    label="Date of Birth"
-                    placeholder="YYYY-MM-DD"
-                  />
-                  <CustomInput
-                    control={form.control}
-                    name="adhaar"
-                    label="Adhaar"
-                    placeholder="Example: 1234 5678 9000"
-                  />
-                </div>
-              </>
-            )}
-            <CustomInput
-              control={form.control}
-              name="email"
-              label="Email"
-              placeholder="Enter your email"
-            />
-            <CustomInput
-              control={form.control}
-              name="password"
-              label="Password"
-              placeholder="Enter your password"
-              type="password"
-            />
-
-            <div className="flex flex-col gap-4">
-              <Button type="submit" disabled={loading} className="form-btn">
-                {loading ? (
-                  <>
-                    <Loader2 size={20} className="animate-spin" /> &nbsp;
-                    Loading....
-                  </>
-                ) : type === "sign-in" ? (
-                  "Sign In"
-                ) : (
-                  "Sign Up"
-                )}
+        <CardContent>
+          {/* NOTE: as AuthType is null , we let user Select Different Auth Method*/}
+          {authType == null && (
+            <div className="flex flex-col space-y-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setAuthType("email");
+                }}
+                className="btn-base"
+              >
+                <span className="btn-content">
+                  <Mail className="mr-2" size={20} strokeWidth={2.5} />
+                  Continue With Email
+                </span>
+                <span className="btn-gradient" />
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  setAuthType("google");
+                }}
+                variant="outline"
+                className="btn-base"
+              >
+                <span className="btn-content">
+                  <span className="text-[25px] mr-2"></span>
+                  Continue with Google
+                </span>
+                <span className="btn-gradient" />
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  setAuthType("github");
+                }}
+                variant="outline"
+                className="btn-base "
+              >
+                <span className="btn-content">
+                  <Github className="mr-2" size={20} strokeWidth={2.5} />
+                  Continue with GitHub
+                </span>
+                <span className="btn-gradient" />
               </Button>
             </div>
-          </form>
-        </Form>
+          )}
+
+          {/*NOTE: Shows the Email Form If AuthType Email is Selected  */}
+
+          {authType == "email" && (
+            <div className="flex flex-col gap-4">
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  type="email"
+                  id="email"
+                  onChange={(e) =>
+                    setAuthCred({ ...authCred, email: e.target.value })
+                  }
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div className="grid w-full max-w-sm items-center gap-1.5">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  type="password"
+                  id="password"
+                  onChange={(e) =>
+                    setAuthCred({ ...authCred, passsword: e.target.value })
+                  }
+                  placeholder="Enter your password"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* NOTE: Showing the choosen AuthType if other than email*/}
+
+          {(authType === "google" || authType === "github") && (
+            <div className="flex  justify-center items-center">
+              <p>
+                You`ve selected
+                <span className="text-userGradient m-2 text-24 font-semibold">
+                  {authType.toUpperCase()}
+                </span>
+              </p>
+            </div>
+          )}
+        </CardContent>
+
+        {/* NOTE: As AythType is Not Null , It shows Main Submit Button */}
+
+        {authType != null && (
+          <>
+            <div className="flex flex-row gap-4">
+              <CardFooter className="flex justify-between items-center">
+                <Button
+                  variant="outline"
+                  className="btn-base"
+                  onClick={() => {
+                    setAuthType(null);
+                  }}
+                >
+                  <span className="btn-content ">
+                    <ChevronLeft className="mr-2" size={20} />
+                    Back
+                  </span>
+                  <span className="btn-gradient" />
+                </Button>
+              </CardFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={loading}
+                className="btn-base w-full mr-[20px]  font-semibold flex-grow ml-3"
+                onClick={authHandler}
+              >
+                <span className="btn-content">
+                  {loading ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin mr-2" />
+                      Loading...
+                    </>
+                  ) : type === "sign-in" ? (
+                    "Sign In"
+                  ) : (
+                    "Sign Up"
+                  )}
+                </span>
+                <span className="btn-gradient" />
+              </Button>
+            </div>
+          </>
+        )}
         <footer className="flex justify-center gap-1">
           <p className=" text-16 font-normal text-gray-600">
             {type === "sign-in"
@@ -197,7 +257,6 @@ const AuthForm = ({ type }: AuthFormProps) => {
           </Link>
         </footer>
       </>
-      {/* )} */}
     </section>
   );
 };
