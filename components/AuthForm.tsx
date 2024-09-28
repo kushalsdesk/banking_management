@@ -10,19 +10,25 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { parseStringify } from "@/lib/utils";
 import LinkBank from "./LinkBank";
+import { auth } from "@/lib/firebase";
 import {
-  getLoggedInUser,
-  SignInWithGithub,
-  SignInWithGoogle,
-  SignWithEmail,
-} from "@/lib/actions/user.actions";
+  createUserWithEmailAndPassword,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  User,
+} from "firebase/auth";
+import {
+  signInWithEmail,
+  signUpWithEmail,
+  signWithGithub,
+  signWithGoogle,
+} from "@/lib/actions/auth.actions";
 
 interface AuthFormProps {
   type: "signin" | "signup";
-}
-interface AuthUser {
-  user: null;
-  userId: string;
 }
 const AuthForm = ({ type }: AuthFormProps) => {
   const [authCred, setAuthCred] = useState<AuthEmailProps>({
@@ -32,9 +38,9 @@ const AuthForm = ({ type }: AuthFormProps) => {
     lastName: "",
     type: type,
   });
+  const user = auth.currentUser;
 
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
   const [authType, setAuthType] = useState<
     "email" | "google" | "github" | null
   >(null);
@@ -42,33 +48,26 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
   const authHandler = async () => {
     setLoading(true);
-
     try {
       if (authType === "email") {
         if (authCred.type === "signup") {
-          const newUser = await SignWithEmail(authCred);
-          if (newUser) {
-            setUser(newUser);
-            router.push("/");
-          } else {
-            router.push("/sign-in");
-          }
+          const newUser = await signUpWithEmail(
+            authCred.email,
+            authCred.password,
+          );
+          console.log(newUser);
         } else {
-          const newUser = await SignWithEmail(authCred);
-          if (!newUser) {
-            setUser(newUser);
-            router.push("/sign-up");
-          } else {
-            router.push("/");
-          }
+          const newUser = await signInWithEmail(
+            authCred.email,
+            authCred.password,
+          );
+          console.log(newUser);
         }
       } else {
         if (authType === "google") {
-          console.log("Trying signin with Authhandler");
-          await SignInWithGoogle();
+          const newUser = await signWithGoogle();
         } else {
-          console.log("Trying signin with Authhandler");
-          await SignInWithGithub();
+          const newUser = await signWithGithub();
         }
       }
     } catch (error) {
@@ -104,7 +103,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
       </header>
       {user ? (
         <div className="flex flex-col gap-4">
-          <LinkBank userId={"123"} />
+          <LinkBank userId={user.uid} />
         </div>
       ) : (
         <>
@@ -161,39 +160,6 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
             {authType == "email" && (
               <div className="flex flex-col gap-4">
-                {type === "signup" && (
-                  <>
-                    <div className="grid w-full max-w-sm items-center gap-1.5">
-                      <Label htmlFor="firstname">First Name</Label>
-                      <Input
-                        type="input"
-                        id="firstname"
-                        onChange={(e) =>
-                          setAuthCred({
-                            ...authCred,
-                            firstName: e.target.value,
-                          })
-                        }
-                        placeholder="Enter Your FirstName"
-                      />
-                    </div>
-
-                    <div className="grid w-full max-w-sm items-center gap-1.5">
-                      <Label htmlFor="lastname">Last Name</Label>
-                      <Input
-                        type="input"
-                        id="lastname"
-                        onChange={(e) =>
-                          setAuthCred({
-                            ...authCred,
-                            lastName: e.target.value,
-                          })
-                        }
-                        placeholder="Enter your email"
-                      />
-                    </div>
-                  </>
-                )}
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                   <Label htmlFor="email">Email</Label>
                   <Input

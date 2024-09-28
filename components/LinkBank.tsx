@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form } from "./ui/form";
 import CustomInput from "./CustomInput";
+import { User } from "firebase/auth";
 
 interface LinkBankProps {
   userId: string;
@@ -23,20 +24,12 @@ const LinkBank = ({ userId }: LinkBankProps) => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
-
-    try {
-      const savedDetails = await saveUserDetails(data, userId);
-      if (savedDetails) router.push("/");
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
   };
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <>
+          <p>{userId}</p>
           <div className="flex gap-3">
             <CustomInput
               control={form.control}

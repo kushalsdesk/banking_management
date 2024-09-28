@@ -1,16 +1,8 @@
-import { SignOut } from "@/lib/actions/user.actions";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
 
 const Footer = ({ user, type = "desktop" }: FooterProps) => {
-  const handleLogout = async () => {
-    const logout = await SignOut();
-    if (logout != null) {
-      redirect("/sign-in");
-    }
-  };
-
   return (
     <footer className="footer">
       <div className={type == "mobile" ? "footer_name-mobile" : "footer_name"}>
@@ -26,7 +18,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
           {user.email}
         </p>
       </div>
-      <div className="footer_image" onClick={handleLogout}>
+      <div className="footer_image">
         <Image src="icons/logout.svg" alt="logout" fill />
       </div>
     </footer>
