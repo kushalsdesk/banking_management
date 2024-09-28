@@ -1,11 +1,11 @@
-import { logoutAccount } from "@/lib/actions/user.actions";
+import { SignOut } from "@/lib/actions/user.actions";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
 
 const Footer = ({ user, type = "desktop" }: FooterProps) => {
   const handleLogout = async () => {
-    const logout = await logoutAccount();
+    const logout = await SignOut();
     if (logout != null) {
       redirect("/sign-in");
     }

@@ -1,52 +1,103 @@
 "use server";
 
-import { auth } from "../firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  GithubAuthProvider,
-  signInWithPopup,
-  signInWithRedirect,
-} from "firebase/auth";
+import { createAdminClient, createSessionClient } from "../appwrite";
+import { ID, OAuthProvider } from "node-appwrite";
+import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { parseStringify } from "../utils";
 
-export const signUp = async (data: SignUpParams) => {
-  const { email, password } = data;
+export const SignOut = async () => {
+  const { account } = await createSessionClient();
+
+  cookies().delete("appwrite-session");
+  await account.deleteSession("current");
+
+  redirect("/sign-up");
+};
+
+export const getLoggedInUser = async () => {
   try {
-    if (email && password) {
-      const session = await createUserWithEmailAndPassword(
-        auth,
+    const { account } = await createSessionClient();
+    const user = await account.get();
+    return parseStringify(user);
+  } catch (error) {
+    return null;
+  }
+};
+
+export const SignWithEmail = async ({
+  email,
+  password,
+  firstName,
+  lastName,
+  type,
+}: AuthEmailProps) => {
+  try {
+    const { account } = await createAdminClient();
+    let user;
+
+    if (type === "signup") {
+      user = await account.create(
+        ID.unique(),
         email,
         password,
+        `${firstName} ${lastName}`,
       );
-      const user = parseStringify(session.user);
-      return user;
+    }
+    const session = await account.createEmailPasswordSession(email, password);
+
+    cookies().set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
+    });
+
+    if (type === "signup") {
+      return parseStringify(user);
+    } else {
+      return parseStringify(session);
     }
   } catch (err) {
+    console.log("Error while Signin with Email");
     console.log(err);
   }
 };
 
-export const signUpGoogle = async (data: SignUpParams) => {
-  const provider = new GoogleAuthProvider();
+export const SignInWithGithub = async () => {
   try {
-    const session = await signInWithPopup(auth, provider);
-    console.log("User is signedUp with Google");
-    const user = parseStringify(session.user);
-    return user;
+    const { account } = await createAdminClient();
+
+    const origin = headers().get("origin");
+
+    const redirectUrl = await account.createOAuth2Token(
+      OAuthProvider.Github,
+      `${origin}/api/oauth`,
+      `${origin}/sign-up`,
+    );
+
+    return redirect(redirectUrl);
   } catch (err) {
+    console.log("Error while Signin with github");
     console.log(err);
   }
 };
-export const signUpGithub = async (data: SignUpParams) => {
-  const provider = new GithubAuthProvider();
+
+export const SignInWithGoogle = async () => {
   try {
-    const session = await signInWithPopup(auth, provider);
-    console.log("User signed up with Github");
-    const user = parseStringify(session.user);
-    return user;
+    const { account } = await createAdminClient();
+
+    const origin = headers().get("origin");
+
+    const redirectUrl = await account.createOAuth2Token(
+      OAuthProvider.Google,
+      `${origin}/api/oauth`,
+      `${origin}/sign-up`,
+    );
+
+    return redirect(redirectUrl);
   } catch (err) {
+    console.log("Error while signin with google");
     console.log(err);
   }
 };

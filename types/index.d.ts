@@ -6,6 +6,13 @@ declare type SearchParamProps = {
 };
 
 // ========================================
+declare type AuthEmailProps = {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+  type: "signup" | "signin";
+};
 
 declare type SignUpParams = {
   firstName?: string;
